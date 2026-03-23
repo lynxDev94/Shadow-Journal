@@ -2,14 +2,14 @@
 // Real Stripe Price IDs from your account
 
 export const STRIPE_PRICE_IDS = {
-  STARTER: "price_1RRlDw5RmLx3D9SH2BQiFTKP", // $1.29/month
+  BEGINNER: "price_1TECDWLgnA1V8fpJG65bIIGJ", // $1.29/month
   PROFESSIONAL: "price_1RRlEF5RmLx3D9SHqHonamX0", // $2.99/month
   ENTERPRISE: "price_1RRlET5RmLx3D9SHeEeJrMEB", // $11.99/month
   TEST_PRODUCT: "price_1RRllZ5RmLx3D9SHTTT1pJxc", // $0.15/month (for testing)
 } as const;
 
 export const STRIPE_PRODUCT_IDS = {
-  STARTER: "prod_SMUCJvjUO3b10X",
+  BEGINNER: "prod_UCbQzscxyZDXvK",
   PROFESSIONAL: "prod_SMUCgGg7VyCXlm",
   ENTERPRISE: "prod_SMUCwCBX9XED4d",
   TEST_PRODUCT: "prod_SMUljCmE8mcxv3",
@@ -28,8 +28,8 @@ export const PLAN_INFO = {
   STARTER: {
     name: "Starter",
     price: 1.29,
-    priceId: STRIPE_PRICE_IDS.STARTER,
-    productId: STRIPE_PRODUCT_IDS.STARTER,
+    priceId: STRIPE_PRICE_IDS.BEGINNER,
+    productId: STRIPE_PRODUCT_IDS.BEGINNER,
     creditLimit: CREDIT_LIMITS.STARTER,
     description: "For small teams exploring AI chatbot capabilities.",
   },
@@ -60,10 +60,18 @@ export const PLAN_INFO = {
   },
 } as const;
 
+// Helper to get plan display name by price ID
+export function getPlanNameByPriceId(priceId: string): string {
+  for (const [, info] of Object.entries(PLAN_INFO)) {
+    if (info.priceId === priceId) return info.name;
+  }
+  return "Unknown Plan";
+}
+
 // Helper function to get credit limit by price ID
 export function getCreditLimitByPriceId(priceId: string): number {
   switch (priceId) {
-    case STRIPE_PRICE_IDS.STARTER:
+    case STRIPE_PRICE_IDS.BEGINNER:
       return CREDIT_LIMITS.STARTER;
     case STRIPE_PRICE_IDS.PROFESSIONAL:
       return CREDIT_LIMITS.PROFESSIONAL;

@@ -9,6 +9,7 @@ import {
   Settings,
   Menu,
   LogOut,
+  CreditCard,
 } from "lucide-react";
 import Image from "next/image";
 import { useAuthContext } from "@/providers/Auth";
@@ -20,11 +21,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { CreditBalance } from "@/components/credits/credit-balance";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/dashboard/journal", label: "Journal", icon: BookOpenText },
   { href: "/dashboard/entries", label: "Entries", icon: FileText },
+  { href: "/dashboard/pricing", label: "Pricing", icon: CreditCard },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ];
 
@@ -32,6 +35,7 @@ function getPageTitle(pathname: string) {
   if (pathname === "/dashboard") return "Dashboard";
   if (pathname.startsWith("/dashboard/journal")) return "Journal";
   if (pathname.startsWith("/dashboard/entries")) return "Entries";
+  if (pathname.startsWith("/dashboard/pricing")) return "Pricing";
   if (pathname.startsWith("/dashboard/settings")) return "Settings";
   return "Dashboard";
 }
@@ -147,6 +151,7 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
                 <span className="text-slate-800">{getPageTitle(pathname)}</span>
               </nav>
             </div>
+            <CreditBalance />
           </div>
         </header>
 

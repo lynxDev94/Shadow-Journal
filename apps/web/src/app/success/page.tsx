@@ -14,6 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useUser } from "@/lib/auth/supabase-client";
 import { Navbar } from "@/components/navbar";
+import { getPlanNameByPriceId } from "@/lib/stripe-config";
 import Link from "next/link";
 
 interface SubscriptionDetails {
@@ -46,27 +47,13 @@ export default function SuccessPage() {
         const data = await response.json();
 
         if (response.ok) {
-          // Map price ID to plan name
-          const getPlanName = (priceId: string) => {
-            switch (priceId) {
-              case "price_1RRlDw5RmLx3D9SH2BQiFTKP":
-                return "Starter";
-              case "price_1RRlEF5RmLx3D9SHqHonamX0":
-                return "Professional";
-              case "price_1RRlET5RmLx3D9SHeEeJrMEB":
-                return "Enterprise";
-              case "price_1RRllZ5RmLx3D9SHTTT1pJxc":
-                return "Test Product";
-              default:
-                return "Unknown Plan";
-            }
-          };
-
           setSubscriptionDetails({
             status: data.subscriptionStatus || "active",
             priceId: data.priceId || "",
             credits: data.credits || 0,
-            planName: getPlanName(data.priceId),
+            planName: data.priceId
+              ? getPlanNameByPriceId(data.priceId)
+              : "Unknown Plan",
           });
         } else {
           setError("Failed to fetch subscription details");
@@ -101,7 +88,7 @@ export default function SuccessPage() {
             </CardHeader>
             <CardContent>
               <Button asChild>
-                <Link href="/pricing">Return to Pricing</Link>
+                <Link href="/dashboard/pricing">Return to Pricing</Link>
               </Button>
             </CardContent>
           </Card>
@@ -137,7 +124,7 @@ export default function SuccessPage() {
                 ? "Please wait while we set up your account"
                 : error
                   ? error
-                  : "Welcome to your new AI chatbot plan"}
+                  : "Welcome to Shadow Journal — you're ready to deepen your practice."}
             </CardDescription>
           </CardHeader>
 
@@ -175,14 +162,14 @@ export default function SuccessPage() {
                     size="lg"
                     className="w-full"
                   >
-                    <Link href="/">Start Using Your AI Chatbot</Link>
+                    <Link href="/dashboard/journal">Go to Journal</Link>
                   </Button>
                   <Button
                     asChild
                     variant="outline"
                     className="w-full"
                   >
-                    <Link href="/pricing">View All Plans</Link>
+                    <Link href="/dashboard/pricing">View All Plans</Link>
                   </Button>
                 </div>
               </div>
@@ -202,14 +189,14 @@ export default function SuccessPage() {
                     asChild
                     className="w-full"
                   >
-                    <Link href="/">Go to Dashboard</Link>
+                    <Link href="/dashboard">Go to Dashboard</Link>
                   </Button>
                   <Button
                     asChild
                     variant="outline"
                     className="w-full"
                   >
-                    <Link href="/pricing">Return to Pricing</Link>
+                    <Link href="/dashboard/pricing">Return to Pricing</Link>
                   </Button>
                 </div>
               </div>

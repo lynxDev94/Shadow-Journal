@@ -106,7 +106,7 @@ export async function POST(request: Request) {
       ],
       mode: "subscription",
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/pricing`,
+      cancel_url: `${baseUrl}/dashboard/pricing`,
       metadata: {
         userId,
       },

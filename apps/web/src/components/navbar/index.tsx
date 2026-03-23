@@ -24,8 +24,9 @@ export function Navbar() {
           href="/"
           className="mr-6 flex items-center"
         >
-          <span className="text-xl font-bold">
-            Agent with Auth and Payments
+          <span className="text-xl font-bold tracking-tight">
+            <span className="text-brand">Shadow</span>
+            <span className="text-slate-800"> Journal</span>
           </span>
         </Link>
         <div className="hidden md:flex">
@@ -36,7 +37,7 @@ export function Navbar() {
                   className={navigationMenuTriggerStyle()}
                   asChild
                 >
-                  <Link href="/">Chat</Link>
+                  <Link href="/">Home</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
@@ -44,7 +45,15 @@ export function Navbar() {
                   className={navigationMenuTriggerStyle()}
                   asChild
                 >
-                  <Link href="/pricing">Pricing</Link>
+                  <Link href="/dashboard/journal">Journal</Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <NavigationMenuLink
+                  className={navigationMenuTriggerStyle()}
+                  asChild
+                >
+                  <Link href="/dashboard/pricing">Pricing</Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>
             </NavigationMenuList>
@@ -75,10 +84,16 @@ export function Navbar() {
                   href="/"
                   className="text-lg font-medium"
                 >
-                  Chat
+                  Home
                 </Link>
                 <Link
-                  href="/pricing"
+                  href="/dashboard/journal"
+                  className="text-lg font-medium"
+                >
+                  Journal
+                </Link>
+                <Link
+                  href="/dashboard/pricing"
                   className="text-lg font-medium"
                 >
                   Pricing

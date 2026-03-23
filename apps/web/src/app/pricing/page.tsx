@@ -252,10 +252,11 @@ function PricingContent() {
 }
 
 // Main component wrapped with Elements provider
-export default function PricingPage() {
+// hideNavbar: use when embedded in dashboard (sidebar provides nav)
+export default function PricingPage({ hideNavbar }: { hideNavbar?: boolean } = {}) {
   return (
     <Elements stripe={stripePromise}>
-      <Navbar />
+      {!hideNavbar && <Navbar />}
       <PricingContent />
     </Elements>
   );

@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Brain, MoonStar, Quote, Sparkles } from "lucide-react";
 
 export interface AnalysisCitation {
   source: string;
@@ -41,80 +42,102 @@ export function AiAnalysisModal({
 }: AiAnalysisModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] max-w-3xl">
-        <DialogHeader>
-          <DialogTitle>AI Analysis</DialogTitle>
-          <DialogDescription>
-            Jungian reflection grounded in your local knowledge sources.
+      <DialogContent className="max-h-[90vh] max-w-4xl overflow-hidden border border-brand/30 bg-linear-to-br from-background-dark via-surface-dark to-background-dark-alt p-0 text-slate-100 shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
+        <DialogHeader className="border-b border-brand/20 bg-black/20 px-6 py-5">
+          <p className="mb-1 inline-flex items-center gap-2 text-[11px] tracking-[0.2em] text-brand/80 uppercase">
+            <MoonStar className="h-3.5 w-3.5" />
+            AI Psychological Synthesis
+          </p>
+          <DialogTitle className="text-3xl text-slate-100">Mirror Reflection</DialogTitle>
+          <DialogDescription className="text-slate-300">
+            Jungian interpretation grounded in your selected knowledge sources.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="max-h-[65vh] overflow-y-auto pr-3">
+        <div className="max-h-[72vh] overflow-y-auto px-6 py-5">
           {loading && (
-            <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+            <div className="flex items-center gap-3 rounded-xl border border-brand/30 bg-brand/10 p-4 text-sm text-slate-200">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-brand border-t-transparent" />
               Running analysis...
             </div>
           )}
 
           {!loading && error && (
-            <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            <div className="rounded-xl border border-red-300/40 bg-red-950/40 p-4 text-sm text-red-200">
               {error}
             </div>
           )}
 
           {!loading && !error && result && (
-            <div className="space-y-5 pb-1 text-sm text-slate-700">
-              <section className="space-y-2">
-                <h3 className="text-base font-semibold text-slate-900">1. Reflection</h3>
-                <p>{result.reflection}</p>
+            <div className="space-y-5 pb-1 text-sm text-slate-200">
+              <section className="space-y-2 rounded-xl border border-brand/25 bg-white/[0.04] p-4">
+                <h3 className="inline-flex items-center gap-2 text-base font-semibold text-slate-100">
+                  <Brain className="h-4 w-4 text-brand" />
+                  1. Reflection
+                </h3>
+                <p className="leading-relaxed text-slate-200">{result.reflection}</p>
               </section>
 
-              <section className="space-y-2">
-                <h3 className="text-base font-semibold text-slate-900">2. Likely Jungian Themes</h3>
+              <section className="space-y-2 rounded-xl border border-brand/25 bg-white/[0.03] p-4">
+                <h3 className="text-base font-semibold text-slate-100">
+                  2. Likely Jungian Themes
+                </h3>
                 <ul className="list-disc space-y-1 pl-5">
                   {result.jungianThemes.map((theme) => (
-                    <li key={theme}>{theme}</li>
+                    <li key={theme} className="text-slate-200">
+                      {theme}
+                    </li>
                   ))}
                 </ul>
               </section>
 
-              <section className="space-y-2">
-                <h3 className="text-base font-semibold text-slate-900">
+              <section className="space-y-2 rounded-xl border border-brand/25 bg-white/[0.03] p-4">
+                <h3 className="text-base font-semibold text-slate-100">
                   3. Jungian Interpretation (with uncertainty)
                 </h3>
-                <p>{result.interpretation}</p>
+                <p className="leading-relaxed text-slate-200">{result.interpretation}</p>
               </section>
 
               <section className="space-y-2">
-                <h3 className="text-base font-semibold text-slate-900">4. Deep Questions</h3>
-                <ul className="list-disc space-y-1 pl-5">
+                <h3 className="text-center text-xs font-semibold tracking-[0.2em] text-brand/80 uppercase">
+                  The Deepening
+                </h3>
+                <ul className="space-y-2">
                   {result.deepQuestions.map((question) => (
-                    <li key={question}>{question}</li>
+                    <li
+                      key={question}
+                      className="relative rounded-xl border border-brand/30 bg-brand-deep/50 p-4 pr-10 text-slate-100"
+                    >
+                      {question}
+                      <Quote className="absolute right-3 bottom-3 h-4 w-4 text-brand/60" />
+                    </li>
                   ))}
                 </ul>
               </section>
 
-              <section className="space-y-2">
-                <h3 className="text-base font-semibold text-slate-900">5. Shadow-Work Exercise</h3>
-                <p>{result.shadowExercise}</p>
+              <section className="space-y-2 rounded-xl border border-brand/30 bg-brand/10 p-4">
+                <h3 className="inline-flex items-center gap-2 text-base font-semibold text-slate-100">
+                  <Sparkles className="h-4 w-4 text-brand" />
+                  5. Shadow-Work Exercise
+                </h3>
+                <p className="leading-relaxed text-slate-100">{result.shadowExercise}</p>
               </section>
 
               <section className="space-y-2">
-                <h3 className="text-base font-semibold text-slate-900">Citations</h3>
+                <h3 className="text-base font-semibold text-slate-100">Citations</h3>
                 {result.citations.length === 0 ? (
-                  <p className="text-slate-500">No source citations returned.</p>
+                  <p className="text-slate-400">No source citations returned.</p>
                 ) : (
                   <div className="space-y-2">
                     {result.citations.map((citation) => (
                       <div
                         key={`${citation.source}-${citation.chunkId}`}
-                        className="rounded-lg border border-slate-200 bg-slate-50 p-3"
+                        className="rounded-lg border border-brand/20 bg-black/25 p-3"
                       >
-                        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-brand/80">
                           {citation.source} #{citation.chunkId}
                         </p>
-                        <p className="text-xs leading-relaxed text-slate-600">
+                        <p className="text-xs leading-relaxed text-slate-300">
                           {citation.preview}
                         </p>
                       </div>
@@ -124,8 +147,8 @@ export function AiAnalysisModal({
               </section>
 
               {result.lowConfidence && (
-                <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800">
-                  Retrieval confidence is low. Treat interpretation as tentative.
+                <div className="rounded-lg border border-amber-300/40 bg-amber-950/40 p-3 text-xs text-amber-200">
+                  Retrieval confidence is low. Treat this interpretation as tentative.
                 </div>
               )}
             </div>

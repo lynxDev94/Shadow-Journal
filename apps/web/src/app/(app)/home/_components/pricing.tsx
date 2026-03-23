@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Check, X, Link } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 type BillingPeriod = "monthly" | "quarterly" | "yearly";
 
@@ -67,7 +68,7 @@ export const Pricing = () => {
         <div className="grid gap-5 text-left sm:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5 transition-colors hover:border-white/20 md:p-6">
             <h3 className="mb-2 font-sans text-lg font-bold text-slate-100">
-              The Seeker
+              Start free
             </h3>
             <p className="mb-4 text-sm text-slate-400">
               Free journaling. No AI analysis.
@@ -89,6 +90,7 @@ export const Pricing = () => {
               </li>
             </ul>
             <div className="mt-auto">
+            <Link href="/signup">
               <Button
                 variant="muted"
                 size="lg"
@@ -96,11 +98,12 @@ export const Pricing = () => {
               >
                 Start Free
               </Button>
+            </Link>
             </div>
           </div>
           <div className="hover:border-brand/30 flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5 transition-colors md:p-6">
             <h3 className="mb-2 font-sans text-lg font-bold text-slate-100">
-              The Reflect
+              Get Reflect
             </h3>
             <p className="mb-4 text-sm text-slate-400">
               Journaling plus 10 AI reflections per month.
@@ -128,7 +131,7 @@ export const Pricing = () => {
                 10 AI analyses per month
               </li>
             </ul>
-            <div className="mt-auto">
+            {/* <div className="mt-auto">
               <Link href="/pricing">
                 <Button
                   variant="outlineDark"
@@ -138,14 +141,14 @@ export const Pricing = () => {
                   Get Started
                 </Button>
               </Link>
-            </div>
+            </div> */}
           </div>
           <div className="group border-brand/40 from-brand/20 to-surface-dark relative flex flex-col overflow-hidden rounded-2xl border bg-gradient-to-br p-5 md:p-6">
             <div className="bg-brand absolute top-3 right-3 rounded px-2 py-1 text-[10px] font-bold tracking-tighter uppercase">
               Recommended
             </div>
             <h3 className="mb-2 font-sans text-lg font-bold text-slate-100">
-              The Initiate
+              Get Initiate
             </h3>
             <p className="mb-4 text-sm text-slate-400">
               30 AI analyses per month, export & priority support.
@@ -178,7 +181,7 @@ export const Pricing = () => {
               </li>
             </ul>
             <div className="mt-auto">
-              <Link href="/pricing">
+              {/* <Link href="/pricing">
                 <Button
                   variant="primary"
                   size="lg"
@@ -186,7 +189,7 @@ export const Pricing = () => {
                 >
                   Begin Integration
                 </Button>
-              </Link>
+              </Link> */}
             </div>
           </div>
           <div className="to-surface-dark relative flex flex-col rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 p-5 opacity-95 md:p-6">
