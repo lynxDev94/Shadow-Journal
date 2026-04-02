@@ -109,16 +109,17 @@ export const Hero = () => {
           className="flex flex-col items-center justify-center gap-6 sm:flex-row"
           variants={heroItem}
         >
-          <Link href="/">
-            <Button
-              variant="primary"
-              size="xl"
-              className="group gap-2"
-            >
+          <Button
+            asChild
+            variant="primary"
+            size="xl"
+            className="group gap-2"
+          >
+            <Link href="/signup">
               Step into the Shadow
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
           <Button
             variant="outlineDark"
             size="xl"

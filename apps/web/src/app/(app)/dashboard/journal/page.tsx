@@ -2,7 +2,13 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useCreditsContext } from "@/providers/Credits";
+import { countJournalWords } from "@/lib/journal-word-count";
+
+/** Minimum word count in the body before Analyze is enabled. */
+const MIN_WORDS_FOR_ANALYSIS = 200;
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import {
@@ -104,7 +110,10 @@ function shuffleArray<T>(arr: T[]): T[] {
 export default function JournalPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { credits, loading: creditsLoading, refreshCredits } = useCreditsContext();
   const editId = searchParams.get("edit");
+  const canAnalyzeCredits =
+    !creditsLoading && credits !== null && credits >= 1;
   const [title, setTitle] = useState("Untitled reflection");
   const [body, setBody] = useState("");
   const [tags, setTags] = useState<{ id: string; label: string }[]>([]);
@@ -157,7 +166,9 @@ export default function JournalPage() {
     return () => { cancelled = true; };
   }, [editId]);
 
-  const wordCount = body.split(/\s+/).filter(Boolean).length;
+  const wordCount = countJournalWords(body);
+  const canAnalyzeLength = wordCount >= MIN_WORDS_FOR_ANALYSIS;
+  const canAnalyze = canAnalyzeCredits && canAnalyzeLength;
 
   const tagLabels = tags.map((t) => t.label);
   const hasContent = title.trim() || body.trim();
@@ -246,7 +257,7 @@ export default function JournalPage() {
   };
 
   const handleAnalyze = async () => {
-    if (!body.trim()) return;
+    if (!body.trim() || !canAnalyze) return;
     setAnalysisOpen(true);
     setAnalysisLoading(true);
     setAnalysisError(null);
@@ -263,9 +274,14 @@ export default function JournalPage() {
       });
       const data = await res.json();
       if (!res.ok || !data?.analysis) {
-        throw new Error(data?.error || "Analysis failed");
+        throw new Error(
+          (typeof data?.message === "string" && data.message) ||
+            (typeof data?.error === "string" && data.error) ||
+            "Analysis failed",
+        );
       }
 
+      void refreshCredits();
       setAnalysisResult({
         ...data.analysis,
         lowConfidence: Boolean(data.lowConfidence),
@@ -403,7 +419,13 @@ export default function JournalPage() {
                 size="lg"
                 className="bg-brand hover:bg-brand/90 gap-2 rounded-xl px-6 text-white shadow-sm"
                 onClick={handleAnalyze}
-                disabled={analysisLoading || saveLoading || editLoading || !body.trim()}
+                disabled={
+                  analysisLoading ||
+                  saveLoading ||
+                  editLoading ||
+                  !body.trim() ||
+                  !canAnalyze
+                }
               >
                 <Sparkles className="h-4 w-4" />
                 {analysisLoading ? "Analyzing..." : "Analyze with AI"}
@@ -438,8 +460,26 @@ export default function JournalPage() {
                   Analyze with AI
                 </span>
                 , Shadow Journal will read this entry, surface recurring themes,
-                and suggest prompts for your next session.
+                and suggest prompts for your next session. Each run uses{" "}
+                <span className="font-medium text-slate-800">1 credit</span>.
+                Your reflection needs at least{" "}
+                <span className="font-medium text-slate-800">
+                  {MIN_WORDS_FOR_ANALYSIS} words
+                </span>{" "}
+                in the body so the analysis has enough to work with.
               </p>
+              {!creditsLoading && credits !== null && credits < 1 && (
+                <p className="mt-3 text-sm text-amber-800">
+                  You&apos;re out of credits.{" "}
+                  <Link
+                    href="/dashboard/pricing"
+                    className="text-brand font-semibold underline-offset-2 hover:underline"
+                  >
+                    Go to Pricing
+                  </Link>{" "}
+                  to subscribe or top up.
+                </p>
+              )}
               <ul className="mt-4 space-y-3">
                 {AI_BENEFITS.map(({ icon: Icon, text }) => (
                   <li

@@ -91,7 +91,8 @@ export async function POST(request: Request) {
           id: userId,
           email: customerEmail,
           stripe_customer_id: customerId,
-          credits_available: 0,
+          subscription_credits: 0,
+          bonus_credits: 0,
           subscription_status: "inactive",
         },
         {

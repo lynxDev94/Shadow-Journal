@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS public.users (
     stripe_subscription_id TEXT UNIQUE,
     subscription_status TEXT DEFAULT 'inactive',
     price_id TEXT,
+    subscription_credits INTEGER NOT NULL DEFAULT 0,
+    bonus_credits INTEGER NOT NULL DEFAULT 0,
     credits_available INTEGER DEFAULT 0,
     current_period_end TIMESTAMPTZ,
     created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -36,6 +38,19 @@ CREATE TRIGGER update_users_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
+CREATE OR REPLACE FUNCTION public.users_sync_credits_available()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.credits_available := COALESCE(NEW.subscription_credits, 0) + COALESCE(NEW.bonus_credits, 0);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER users_sync_credits_available_trigger
+    BEFORE INSERT OR UPDATE ON public.users
+    FOR EACH ROW
+    EXECUTE FUNCTION public.users_sync_credits_available();
+
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can read own data" ON public.users FOR SELECT USING (auth.uid() = id);
@@ -47,8 +62,8 @@ CREATE POLICY "Service role can manage all users" ON public.users
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO public.users (id, email, credits_available, subscription_status)
-    VALUES (NEW.id, NEW.email, 0, 'inactive');
+    INSERT INTO public.users (id, email, subscription_credits, bonus_credits, subscription_status)
+    VALUES (NEW.id, NEW.email, 0, 0, 'inactive');
     RETURN NEW;
 EXCEPTION
     WHEN unique_violation THEN RETURN NEW;
@@ -108,3 +123,8 @@ CREATE TRIGGER update_entries_updated_at
     BEFORE UPDATE ON public.entries
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TABLE IF NOT EXISTS public.stripe_subscription_credit_events (
+    id TEXT PRIMARY KEY,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);

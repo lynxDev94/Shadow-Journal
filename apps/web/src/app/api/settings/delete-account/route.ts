@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { supabaseServer } from "@/lib/auth/supabase-server";
+import { cancelStripeSubscriptionsForAppUser } from "@/lib/stripe-account-cleanup";
 
 /** DELETE /api/settings/delete-account - Permanently delete the user account */
 export async function DELETE() {
@@ -17,6 +18,8 @@ export async function DELETE() {
         { status: 401 },
       );
     }
+
+    await cancelStripeSubscriptionsForAppUser(user.id);
 
     const { error } = await supabaseServer.auth.admin.deleteUser(user.id);
 

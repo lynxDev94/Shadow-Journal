@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { Client } from "@langchain/langgraph-sdk";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import {
+  deductUserCreditsServer,
+  refundUserCreditsServer,
+  type CreditPoolDelta,
+} from "@/lib/credits-server";
+
+const ANALYSIS_CREDIT_COST = 1;
 
 const CitationSchema = z.object({
   source: z.string().min(1),
@@ -77,6 +84,9 @@ export async function POST(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  let userIdForRefund: string | null = null;
+  let poolRefund: CreditPoolDelta | null = null;
+
   try {
     const supabase = await createSupabaseServerClient();
     const {
@@ -90,6 +100,8 @@ export async function POST(
         { status: 401 },
       );
     }
+
+    userIdForRefund = user.id;
 
     const {
       data: { session },
@@ -112,9 +124,35 @@ export async function POST(
       return NextResponse.json({ error: "Entry not found" }, { status: 404 });
     }
 
+    const deduct = await deductUserCreditsServer(user.id, ANALYSIS_CREDIT_COST);
+    if (!deduct.ok) {
+      return NextResponse.json(
+        {
+          error: "Insufficient credits",
+          message:
+            "You need at least one credit to run AI analysis. Upgrade your plan or buy an extra analysis.",
+        },
+        { status: 402 },
+      );
+    }
+
+    poolRefund = deduct.refund;
+
+    const safeRefund = async () => {
+      if (!userIdForRefund || !poolRefund) return;
+      const r = poolRefund;
+      poolRefund = null;
+      try {
+        await refundUserCreditsServer(userIdForRefund, r);
+      } catch (re) {
+        console.error("Failed to refund analysis credit:", re);
+      }
+    };
+
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const assistantId = process.env.NEXT_PUBLIC_ASSISTANT_ID || "agent";
     if (!apiUrl) {
+      await safeRefund();
       return NextResponse.json(
         { error: "Missing NEXT_PUBLIC_API_URL configuration" },
         { status: 500 },
@@ -147,14 +185,27 @@ export async function POST(
 
     const assistantText = extractAssistantText(runResult);
     if (!assistantText) {
+      await safeRefund();
       return NextResponse.json(
         { error: "AI analysis returned empty output" },
         { status: 502 },
       );
     }
 
-    const parsed = AnalysisSchema.safeParse(JSON.parse(stripCodeFences(assistantText)));
+    let parsedJson: unknown;
+    try {
+      parsedJson = JSON.parse(stripCodeFences(assistantText));
+    } catch {
+      await safeRefund();
+      return NextResponse.json(
+        { error: "Invalid analysis JSON from model" },
+        { status: 502 },
+      );
+    }
+
+    const parsed = AnalysisSchema.safeParse(parsedJson);
     if (!parsed.success) {
+      await safeRefund();
       return NextResponse.json(
         {
           error: "Invalid analysis payload shape",
@@ -167,11 +218,21 @@ export async function POST(
 
     const lowConfidence = parsed.data.citations.length === 0;
 
+    poolRefund = null;
+
     return NextResponse.json({
       analysis: parsed.data,
       lowConfidence,
     });
   } catch (err) {
+    if (userIdForRefund && poolRefund) {
+      try {
+        await refundUserCreditsServer(userIdForRefund, poolRefund);
+      } catch (re) {
+        console.error("Failed to refund analysis credit after error:", re);
+      }
+      poolRefund = null;
+    }
     console.error("Entry analysis POST error:", err);
     return NextResponse.json(
       { error: "Internal server error" },

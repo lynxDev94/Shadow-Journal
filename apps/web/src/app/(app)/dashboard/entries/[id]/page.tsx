@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useCreditsContext } from "@/providers/Credits";
+import { countJournalWords } from "@/lib/journal-word-count";
+
+const MIN_WORDS_FOR_ANALYSIS = 200;
 import {
   Dialog,
   DialogContent,
@@ -49,6 +53,7 @@ function formatDateTime(dateStr: string) {
 export default function EntryReadPage() {
   const params = useParams();
   const router = useRouter();
+  const { credits, loading: creditsLoading, refreshCredits } = useCreditsContext();
   const id = typeof params.id === "string" ? params.id : null;
   const [entry, setEntry] = useState<Entry | null>(null);
   const [loading, setLoading] = useState(true);
@@ -59,6 +64,12 @@ export default function EntryReadPage() {
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] =
     useState<JungianAnalysisResult | null>(null);
+
+  const entryWordCount = entry ? countJournalWords(entry.body ?? "") : 0;
+  const canAnalyzeLength = entryWordCount >= MIN_WORDS_FOR_ANALYSIS;
+  const canAnalyzeCredits =
+    !creditsLoading && credits !== null && credits >= 1;
+  const canAnalyze = canAnalyzeCredits && canAnalyzeLength;
 
   useEffect(() => {
     if (!id) {
@@ -94,7 +105,7 @@ export default function EntryReadPage() {
   };
 
   const handleAnalyze = async () => {
-    if (!id) return;
+    if (!id || !canAnalyze) return;
     setAnalysisOpen(true);
     setAnalysisLoading(true);
     setAnalysisError(null);
@@ -106,8 +117,13 @@ export default function EntryReadPage() {
       });
       const data = await res.json();
       if (!res.ok || !data?.analysis) {
-        throw new Error(data?.error || "Analysis failed");
+        throw new Error(
+          (typeof data?.message === "string" && data.message) ||
+            (typeof data?.error === "string" && data.error) ||
+            "Analysis failed",
+        );
       }
+      void refreshCredits();
       setAnalysisResult({
         ...data.analysis,
         lowConfidence: Boolean(data.lowConfidence),
@@ -242,12 +258,34 @@ export default function EntryReadPage() {
               <p className="text-sm text-slate-600">
                 Run a Jungian analysis grounded in your local knowledge base for
                 themes, projections, questions, and one shadow-work exercise.
+                Uses{" "}
+                <span className="font-medium text-slate-800">1 credit</span> per
+                run. The entry body must be at least{" "}
+                <span className="font-medium text-slate-800">
+                  {MIN_WORDS_FOR_ANALYSIS} words
+                </span>
+                .
               </p>
+              {!creditsLoading && credits !== null && credits < 1 && (
+                <p className="text-sm text-amber-800">
+                  You&apos;re out of credits.{" "}
+                  <Link
+                    href="/dashboard/pricing"
+                    className="text-brand font-semibold underline-offset-2 hover:underline"
+                  >
+                    Pricing
+                  </Link>
+                </p>
+              )}
               <Button
                 variant="primary"
                 className="bg-brand hover:bg-brand/90 w-full gap-2 rounded-xl text-white"
                 onClick={handleAnalyze}
-                disabled={analysisLoading}
+                disabled={
+                  analysisLoading ||
+                  !canAnalyze ||
+                  !entry.body?.trim()
+                }
               >
                 <Sparkles className="h-4 w-4" />
                 {analysisLoading ? "Analyzing..." : "Analyze with AI"}

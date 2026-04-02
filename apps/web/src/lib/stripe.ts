@@ -71,27 +71,27 @@ export async function getCustomerSubscription(userId: string) {
 
 export async function addUserCredits(userId: string, creditsToAdd: number) {
   try {
-    // Add credits to user's balance
     const { data: currentUser } = await supabase
       .from("users")
-      .select("credits_available")
+      .select("subscription_credits, bonus_credits")
       .eq("id", userId)
       .single();
 
-    const currentCredits = (currentUser?.credits_available as number) || 0;
-    const newCredits = currentCredits + creditsToAdd;
+    const sub = (currentUser?.subscription_credits as number) ?? 0;
+    const bonus = (currentUser?.bonus_credits as number) ?? 0;
+    const newSub = sub + creditsToAdd;
 
     const { error } = await supabase
       .from("users")
       .update({
-        credits_available: newCredits,
-        subscription_status: "active", // Ensure user has active status when adding credits
+        subscription_credits: newSub,
+        bonus_credits: bonus,
       })
       .eq("id", userId);
 
     if (error) throw error;
 
-    return { success: true, newBalance: newCredits };
+    return { success: true, newBalance: newSub + bonus };
   } catch (error) {
     console.error("Error adding user credits:", error);
     throw error;
@@ -103,32 +103,43 @@ export async function deductUserCredits(
   creditsToDeduct: number,
 ) {
   try {
-    // Deduct credits from user's balance
     const { data: currentUser, error: fetchError } = await supabase
       .from("users")
-      .select("credits_available")
+      .select("subscription_credits, bonus_credits")
       .eq("id", userId)
       .single();
 
     if (fetchError) throw fetchError;
 
-    const currentBalance = (currentUser?.credits_available as number) || 0;
+    const sub = (currentUser?.subscription_credits as number) ?? 0;
+    const bonus = (currentUser?.bonus_credits as number) ?? 0;
+    const currentBalance = sub + bonus;
     if (currentBalance < creditsToDeduct) {
       throw new Error("Insufficient credits");
     }
 
-    const newCredits = currentBalance - creditsToDeduct;
+    let newSub = sub;
+    let newBonus = bonus;
+    let remaining = creditsToDeduct;
+    if (remaining <= sub) {
+      newSub = sub - remaining;
+    } else {
+      remaining -= sub;
+      newSub = 0;
+      newBonus = bonus - remaining;
+    }
 
     const { error } = await supabase
       .from("users")
       .update({
-        credits_available: newCredits,
+        subscription_credits: newSub,
+        bonus_credits: newBonus,
       })
       .eq("id", userId);
 
     if (error) throw error;
 
-    return { success: true, newBalance: newCredits };
+    return { success: true, newBalance: newSub + newBonus };
   } catch (error) {
     console.error("Error deducting user credits:", error);
     throw error;
