@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { Pricing } from "../_components/pricing";
+import { PricingPageClient } from "./_components/pricingPageClient";
 import { Toaster } from "@/components/ui/sonner";
 
 export default function DashboardPricingPage() {
@@ -7,7 +7,7 @@ export default function DashboardPricingPage() {
     <>
       <Toaster />
       <Suspense fallback={<div className="text-slate-500 text-sm">Loading pricing…</div>}>
-        <Pricing />
+        <PricingPageClient />
       </Suspense>
     </>
   );
