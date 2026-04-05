@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthContext } from "@/providers/Auth";
 
-export function DashboardAuthGuard({
+export function AuthGuard({
   children,
 }: {
   children: React.ReactNode;

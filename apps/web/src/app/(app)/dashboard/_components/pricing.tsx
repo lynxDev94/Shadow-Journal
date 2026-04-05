@@ -21,7 +21,7 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "",
 );
 
-/** Dashboard shows monthly subscription pricing only */
+/** Monthly subscription pricing only */
 const REFLECT_MONTHLY_EUR = 14;
 const INITIATE_MONTHLY_EUR = 29;
 const INTEGRATOR_MONTHLY_EUR = 59;
@@ -30,7 +30,7 @@ function isPaidSubscriptionActive(status: string | null): boolean {
   return status === "active" || status === "trialing";
 }
 
-function DashboardPricingContent() {
+function PricingContent() {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState<
     "reflect" | "initiate" | "extra" | "portal" | null
@@ -377,10 +377,10 @@ function DashboardPricingContent() {
   );
 }
 
-export function DashboardPricing() {
+export function Pricing() {
   return (
     <Elements stripe={stripePromise}>
-      <DashboardPricingContent />
+      <PricingContent />
     </Elements>
   );
 }
