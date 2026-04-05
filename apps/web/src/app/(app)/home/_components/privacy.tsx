@@ -10,25 +10,24 @@ export const Privacy = () => {
         <div className="grid gap-16 md:grid-cols-2 md:items-center">
           <div>
             <span className="text-brand mb-3 block text-xs font-bold tracking-widest uppercase">
-              Built for Privacy
+              Privacy by default
             </span>
             <h2 className="font-headline mb-6 text-3xl font-light md:text-4xl">
-              Your Thoughts Stay Private
+              A private journal, not a social feed.
             </h2>
             <p className="mb-8 text-lg text-slate-400">
-              Your journal is personal - it should stay that way. We use secure
-              authentication, encrypted connections, and privacy-first design so
-              your entries stay protected and under your control.
+              Your entries are for you. Shadow Journal is built for reflection,
+              not performance - no public posting, no likes, no algorithmic pressure.
             </p>
             <ul className="space-y-4">
               <li className="flex gap-3">
                 <Lock className="text-brand mt-0.5 h-5 w-5 shrink-0" />
                 <div>
                   <h4 className="font-sans font-bold text-slate-100">
-                    Encrypted Connection (HTTPS)
+                    Private by default
                   </h4>
                   <p className="text-sm text-slate-400">
-                    Your entries are protected while being sent and saved.
+                    Only your account can access your entries.
                   </p>
                 </div>
               </li>
@@ -36,11 +35,10 @@ export const Privacy = () => {
                 <Shield className="text-brand mt-0.5 h-5 w-5 shrink-0" />
                 <div>
                   <h4 className="font-sans font-bold text-slate-100">
-                    Private Access Only
+                    Encrypted connection (HTTPS)
                   </h4>
                   <p className="text-sm text-slate-400">
-                    Only you can view your entries — protected by secure
-                    authentication.
+                    Your entries are protected while being sent and saved.
                   </p>
                 </div>
               </li>
@@ -67,7 +65,7 @@ export const Privacy = () => {
               Private by Design
             </p>
             <p className="text-xs text-slate-500">
-              Your entries stay encrypted and in your control.
+              No public profiles. No ads. You control your journal data.
             </p>
           </div>
         </div>

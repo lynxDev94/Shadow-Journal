@@ -1,7 +1,23 @@
+"use client";
+
+import { useState } from "react";
 import { Mail } from "lucide-react";
 import Link from "next/link";
 
 export const Footer = () => {
+  const [copied, setCopied] = useState(false);
+  const supportEmail = "shadowmindjournal@gmail.com";
+
+  const onCopyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(supportEmail);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
+    }
+  };
+
   return (
     <footer className="bg-background-dark border-t border-white/5 py-20">
       <div className="mx-auto max-w-7xl px-6">
@@ -24,11 +40,27 @@ export const Footer = () => {
             </p>
             <div className="flex gap-4">
               <a
-                href="#"
+                href={`mailto:${supportEmail}`}
                 className="hover:bg-brand/20 flex h-10 w-10 items-center justify-center rounded-full bg-white/5 transition-colors"
+                aria-label="Email Shadow Journal"
               >
                 <Mail className="h-4 w-4 text-slate-400" />
               </a>
+            </div>
+            <div className="mt-4 flex flex-wrap items-center gap-2 text-sm">
+              <a
+                href={`mailto:${supportEmail}`}
+                className="text-slate-400 hover:text-brand transition-colors"
+              >
+                {supportEmail}
+              </a>
+              <button
+                type="button"
+                onClick={onCopyEmail}
+                className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-300 transition-colors hover:border-white/20 hover:text-white"
+              >
+                {copied ? "Copied" : "Copy email"}
+              </button>
             </div>
           </div>
           <div>
@@ -72,12 +104,12 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link
-                  href="#"
+                <a
+                  href={`mailto:${supportEmail}`}
                   className="hover:text-brand transition-colors"
                 >
                   Contact
-                </Link>
+                </a>
               </li>
             </ul>
           </div>

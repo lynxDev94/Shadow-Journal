@@ -1,5 +1,5 @@
-import { SidebarLayout } from "./components/sidebar-layout";
-import { DashboardAuthGuard } from "./_components/dashboard-auth-guard";
+import { SidebarLayout } from "./_components/sidebarLayout";
+import { DashboardAuthGuard } from "./_components/dashboardAuthGuard";
 
 export default function DashboardLayout({
   children,

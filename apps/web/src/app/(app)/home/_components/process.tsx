@@ -33,42 +33,38 @@ export const Process = () => {
               The Process
             </h2>
             <p className="mb-12 text-lg text-slate-400">
-              Write honestly. Track your patterns. Let AI help you see what you
-              can’t.
+              A simple loop: write privately, reflect clearly, repeat consistently.
             </p>
             <div className="border-brand/20 relative space-y-24 border-l pl-8">
               <div className="from-brand via-brand/50 absolute top-0 -left-px h-full w-0.5 bg-gradient-to-b to-transparent" />
               <div className="relative">
                 <div className="border-brand bg-background-dark absolute top-0 -left-[41px] flex h-6 w-6 items-center justify-center rounded-full border-4 shadow-[0_0_15px_rgba(var(--sj-brand-rgb),0.5)]" />
                 <h3 className="mb-3 font-sans text-2xl font-bold text-slate-100">
-                  Start With a Quick Check-In
+                  Write a Private Entry
                 </h3>
                 <p className="text-slate-400">
-                  Answer a few questions about your goals, emotions, and what
-                  you want to work on. We personalize prompts and archetype
-                  insights based on your focus.
+                  Capture what happened and how it felt. No public feed, no
+                  performance, just your own private space.
                 </p>
               </div>
               <div className="relative">
                 <div className="border-brand/40 bg-background-dark absolute top-0 -left-[41px] flex h-6 w-6 items-center justify-center rounded-full border-4" />
                 <h3 className="mb-3 font-sans text-2xl font-bold text-slate-100">
-                  Journal Freely, Track Your Growth
+                  Get One Focused Reflection
                 </h3>
                 <p className="text-slate-400">
-                  Write entries in your private space and watch your progress
-                  over time. Your dashboard keeps everything organized - moods,
-                  themes, and consistency.
+                  Run AI analysis to surface patterns, blind spots, and one clear
+                  direction for your next step.
                 </p>
               </div>
               <div className="relative">
                 <div className="border-brand/20 bg-background-dark absolute top-0 -left-[41px] flex h-6 w-6 items-center justify-center rounded-full border-4" />
                 <h3 className="mb-3 font-sans text-2xl font-bold text-slate-100">
-                  Get Jungian Insights & Archetype Analysis
+                  Build Your Inner Map Over Time
                 </h3>
                 <p className="text-slate-400">
-                  Let AI analyze your writing for emotional patterns, recurring
-                  themes, and Jungian archetypes. Receive reflections, blind
-                  spots, and prompts to go deeper.
+                  Keep writing and reviewing your patterns so change is visible,
+                  not just felt.
                 </p>
               </div>
             </div>

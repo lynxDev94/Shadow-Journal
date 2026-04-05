@@ -17,6 +17,11 @@ export default function SigninInterface() {
   const { signIn, signInWithGoogle, isAuthenticated } = useAuthContext();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const raw = searchParams.get("redirect");
+  const postAuthPath =
+    raw?.startsWith("/dashboard") && !raw.startsWith("//")
+      ? raw
+      : "/dashboard";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -44,9 +49,9 @@ export default function SigninInterface() {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      router.push("/dashboard");
+      router.push(postAuthPath);
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, router, postAuthPath]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -197,7 +202,7 @@ export default function SigninInterface() {
                 <span>Success! We're redirecting you to the dashboard...</span>
                 {showManualRedirect && (
                   <Button
-                    onClick={() => router.push("/dashboard")}
+                    onClick={() => router.push(postAuthPath)}
                     variant="outline"
                     className="mt-2 border-green-300 text-green-700 hover:bg-green-100"
                   >

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAuthContext } from "@/providers/Auth";
 
 export function DashboardAuthGuard({
@@ -11,12 +11,13 @@ export function DashboardAuthGuard({
 }) {
   const { isAuthenticated, isLoading } = useAuthContext();
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.replace("/signin?redirect=/dashboard");
+      router.replace(`/signin?redirect=${encodeURIComponent(pathname)}`);
     }
-  }, [isLoading, isAuthenticated, router]);
+  }, [isLoading, isAuthenticated, router, pathname]);
 
   if (isLoading) {
     return (

@@ -7,7 +7,7 @@ const FAQ_BG_IMAGE = "/images/faq-pen-writing.png";
 const FAQ_ITEMS = [
   {
     q: "Is my data safe with AI?",
-    a: "Yes. Entries are stored encrypted. If you use ‘Analyze,’ that entry is decrypted and sent for that single analysis; we don’t use it for training and we don’t store the decrypted copy / we only process it in a secure environment.",
+    a: "We use secure authentication, encrypted transport, and access controls. When you choose Analyze, relevant entry content is processed to generate that result. We do not sell your journal data.",
   },
   {
     q: "How does Jungian analysis work in practice?",
@@ -19,7 +19,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "What happens if I cancel my subscription?",
-    a: "You keep access until the end of your billing period. After that, your data remains stored and you can export it anytime. You can continue with the free tier (The Seeker) and re-subscribe later if you choose.",
+    a: "You keep paid access until the end of your billing period. After that, your account falls back to the free tier, your journal entries remain available, and you can re-subscribe anytime.",
   },
 ];
 

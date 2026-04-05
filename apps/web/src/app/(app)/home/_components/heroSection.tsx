@@ -81,21 +81,21 @@ export const Hero = () => {
             className="block"
             variants={heroItem}
           >
-            Meet the version of you
+            AI journaling that helps
           </motion.span>
           <motion.span
             className="glow-text from-brand to-brand/80 block bg-gradient-to-r via-white bg-clip-text font-bold text-transparent"
             variants={heroItem}
           >
-            you've been hiding
+            understand your shadow patterns
           </motion.span>
         </h1>
         <motion.p
           className="mx-auto mb-12 max-w-2xl text-lg leading-relaxed text-slate-400 md:text-xl"
           variants={heroItem}
         >
-          Write privately. Get AI-guided Jungian reflections to support shadow
-          integration.
+          Write what happened. Get AI-guided Jungian reflections in minutes so you
+          can spot triggers, recurring themes, and your next step.
         </motion.p>
         <motion.div
           className="mb-8 w-full max-w-[200px] md:max-w-[280px]"
@@ -121,10 +121,11 @@ export const Hero = () => {
             </Link>
           </Button>
           <Button
+            asChild
             variant="outlineDark"
             size="xl"
           >
-            How It Works
+            <Link href="#process">How It Works</Link>
           </Button>
         </motion.div>
       </motion.div>

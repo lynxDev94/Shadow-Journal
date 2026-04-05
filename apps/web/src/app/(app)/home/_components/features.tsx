@@ -4,18 +4,18 @@ export const Features = () => {
   const cards = [
     {
       icon: Moon,
-      title: "Shadow Work",
-      desc: "Explore the thoughts you avoid, the emotions you suppress, and the patterns you repeat, without feeling overwhelmed.",
+      title: "See Recurring Patterns",
+      desc: "Surface the triggers, emotions, and loops that keep repeating in your entries.",
     },
     {
       icon: VenetianMask,
-      title: "Jungian Archetypes",
-      desc: "The AI detects archetypes in your writing - like The Shadow, The Child, The Hero, or The Lover, and shows what they reveal about you.",
+      title: "Jungian Lens, Not Diagnosis",
+      desc: "Get reflections through archetypes like Shadow, Child, Hero, and Lover to guide deeper self-inquiry.",
     },
     {
       icon: Lightbulb,
-      title: "Self-Reflection With AI Insights",
-      desc: "Turn journal entries into clarity. Get summaries, emotional patterns, and questions that help you think deeper.",
+      title: "Clear Next Steps",
+      desc: "Turn raw entries into practical insights with summaries, key themes, and prompts for your next session.",
     },
   ];
 
@@ -27,7 +27,7 @@ export const Features = () => {
             AI Journaling for Shadow Work & Self-Discovery
           </h2>
           <p className="mx-auto max-w-2xl text-center text-lg text-slate-400">
-            Write like a normal journal - but get deeper insights. <br />
+            Write for 5-10 minutes. Get one focused reflection that helps you move forward.
           </p>
         </div>
         <div className="grid gap-8 md:grid-cols-3">
