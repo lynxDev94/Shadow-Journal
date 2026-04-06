@@ -1,6 +1,4 @@
-type JournalHeaderProps = {
-  isEdit: boolean;
-};
+import type { JournalHeaderProps } from "../types";
 
 export function JournalHeader({ isEdit }: JournalHeaderProps) {
   return (

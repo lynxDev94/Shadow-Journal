@@ -8,17 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { PenLine, Shuffle } from "lucide-react";
-import type { PromptCategory } from "../types";
-
-type PromptIdeasDialogProps = {
-  open: boolean;
-  selectedPrompt: string | null;
-  categories: PromptCategory[];
-  onOpenChange: (open: boolean) => void;
-  onSelectPrompt: (prompt: string | null) => void;
-  onShuffle: () => void;
-  onApply: () => void;
-};
+import type { PromptIdeasDialogProps } from "../types";
 
 export function PromptIdeasDialog({
   open,
@@ -30,7 +20,10 @@ export function PromptIdeasDialog({
   onApply,
 }: PromptIdeasDialogProps) {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={onOpenChange}
+    >
       <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <div className="flex items-start justify-between gap-4 pr-8">
@@ -72,7 +65,9 @@ export function PromptIdeasDialog({
                       key={prompt}
                       type="button"
                       onClick={() =>
-                        onSelectPrompt(selectedPrompt === prompt ? null : prompt)
+                        onSelectPrompt(
+                          selectedPrompt === prompt ? null : prompt,
+                        )
                       }
                       className={`w-full rounded-xl border px-4 py-3 text-left text-sm transition-colors ${
                         selectedPrompt === prompt
@@ -89,7 +84,10 @@ export function PromptIdeasDialog({
           })}
         </div>
         <DialogFooter className="border-dashboard-stroke flex-row gap-2 border-t pt-4 sm:justify-end">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+          >
             Cancel
           </Button>
           <Button

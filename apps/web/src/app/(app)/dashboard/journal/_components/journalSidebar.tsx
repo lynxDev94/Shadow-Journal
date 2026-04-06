@@ -3,17 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Brain, Plus, X } from "lucide-react";
 import { MIN_WORDS_FOR_ANALYSIS } from "@/lib/constants";
 import { AI_BENEFITS } from "../deps";
-import type { JournalTag } from "../types";
-
-type JournalSidebarProps = {
-  creditsLoading: boolean;
-  credits: number | null;
-  tags: JournalTag[];
-  newTag: string;
-  onNewTagChange: (value: string) => void;
-  onAddTag: () => void;
-  onRemoveTag: (id: string) => void;
-};
+import type { JournalSidebarProps } from "../types";
 
 export function JournalSidebar({
   creditsLoading,
@@ -35,9 +25,10 @@ export function JournalSidebar({
         </div>
         <div className="p-5">
           <p className="text-sm text-slate-600">
-            When you click <span className="text-brand font-semibold">Analyze with AI</span>, Shadow Journal
-            will read this entry, surface recurring themes, and suggest prompts
-            for your next session. Each run uses{" "}
+            When you click{" "}
+            <span className="text-brand font-semibold">Analyze with AI</span>,
+            Shadow Journal will read this entry, surface recurring themes, and
+            suggest prompts for your next session. Each run uses{" "}
             <span className="font-medium text-slate-800">1 credit</span>. Your
             reflection needs at least{" "}
             <span className="font-medium text-slate-800">
@@ -59,7 +50,10 @@ export function JournalSidebar({
           )}
           <ul className="mt-4 space-y-3">
             {AI_BENEFITS.map(({ icon: Icon, text }) => (
-              <li key={text} className="flex items-start gap-3 text-sm text-slate-600">
+              <li
+                key={text}
+                className="flex items-start gap-3 text-sm text-slate-600"
+              >
                 <span className="bg-brand/10 text-brand mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg">
                   <Icon className="h-3.5 w-3.5" />
                 </span>
@@ -71,7 +65,9 @@ export function JournalSidebar({
       </div>
 
       <div className="border-dashboard-stroke shadow-card-layered rounded-2xl border bg-white p-5">
-        <h2 className="font-sans text-sm font-bold text-slate-800">Tags & motifs</h2>
+        <h2 className="font-sans text-sm font-bold text-slate-800">
+          Tags & motifs
+        </h2>
         <p className="mt-0.5 text-xs text-slate-500">
           Optional—helps AI notice patterns across entries.
         </p>

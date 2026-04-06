@@ -1,25 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Check, EyeOff, Lightbulb, PenLine, Sparkles, X } from "lucide-react";
-
-type JournalEditorPaneProps = {
-  title: string;
-  body: string;
-  referencePrompt: string | null;
-  wordCount: number;
-  statusText: string;
-  canAnalyze: boolean;
-  saveLoading: boolean;
-  editLoading: boolean;
-  analysisLoading: boolean;
-  isEdit: boolean;
-  onTitleChange: (value: string) => void;
-  onBodyChange: (value: string) => void;
-  onOpenPrompts: () => void;
-  onClearReferencePrompt: () => void;
-  onAnalyze: () => void;
-  onSave: () => void;
-};
+import type { JournalEditorPaneProps } from "../types";
 
 export function JournalEditorPane({
   title,
@@ -100,7 +82,9 @@ export function JournalEditorPane({
             <p className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase">
               Words
             </p>
-            <p className="text-sm font-medium text-slate-700">{wordCount} words</p>
+            <p className="text-sm font-medium text-slate-700">
+              {wordCount} words
+            </p>
           </div>
           <div>
             <p className="text-[10px] font-semibold tracking-wider text-slate-400 uppercase">
@@ -133,7 +117,11 @@ export function JournalEditorPane({
             className="bg-brand hover:bg-brand/90 gap-2 rounded-xl px-6 text-white shadow-sm"
             onClick={onAnalyze}
             disabled={
-              analysisLoading || saveLoading || editLoading || !body.trim() || !canAnalyze
+              analysisLoading ||
+              saveLoading ||
+              editLoading ||
+              !body.trim() ||
+              !canAnalyze
             }
           >
             <Sparkles className="h-4 w-4" />

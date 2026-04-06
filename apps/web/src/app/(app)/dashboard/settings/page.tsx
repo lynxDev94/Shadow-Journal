@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,46 +15,31 @@ import {
 } from "@/components/ui/dialog";
 import { Trash2, UserX, BookOpen } from "lucide-react";
 import { useAuthContext } from "@/providers/Auth";
+import { deleteAccountData, deleteJournalData } from "./api";
 
 export default function SettingsPage() {
   const router = useRouter();
   const { signOut } = useAuthContext();
   const [journalDialogOpen, setJournalDialogOpen] = useState(false);
   const [accountDialogOpen, setAccountDialogOpen] = useState(false);
-  const [journalLoading, setJournalLoading] = useState(false);
-  const [accountLoading, setAccountLoading] = useState(false);
 
-  const handleDeleteJournal = async () => {
-    setJournalLoading(true);
-    try {
-      const res = await fetch("/api/settings/delete-journal", {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        setJournalDialogOpen(false);
-        router.push("/dashboard");
-        router.refresh();
-      }
-    } finally {
-      setJournalLoading(false);
-    }
-  };
+  const deleteJournalMutation = useMutation({
+    mutationFn: deleteJournalData,
+    onSuccess: () => {
+      setJournalDialogOpen(false);
+      router.push("/dashboard");
+      router.refresh();
+    },
+  });
 
-  const handleDeleteAccount = async () => {
-    setAccountLoading(true);
-    try {
-      const res = await fetch("/api/settings/delete-account", {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        setAccountDialogOpen(false);
-        await signOut();
-        router.push("/");
-      }
-    } finally {
-      setAccountLoading(false);
-    }
-  };
+  const deleteAccountMutation = useMutation({
+    mutationFn: deleteAccountData,
+    onSuccess: async () => {
+      setAccountDialogOpen(false);
+      await signOut();
+      router.push("/");
+    },
+  });
 
   return (
     <div className="mx-auto max-w-3xl font-sans text-slate-800">
@@ -140,16 +126,18 @@ export default function SettingsPage() {
             <Button
               variant="outline"
               onClick={() => setJournalDialogOpen(false)}
-              disabled={journalLoading}
+              disabled={deleteJournalMutation.isPending}
             >
               Cancel
             </Button>
             <Button
               variant="destructive"
-              onClick={handleDeleteJournal}
-              disabled={journalLoading}
+              onClick={() => deleteJournalMutation.mutate()}
+              disabled={deleteJournalMutation.isPending}
             >
-              {journalLoading ? "Deleting..." : "Delete journal data"}
+              {deleteJournalMutation.isPending
+                ? "Deleting..."
+                : "Delete journal data"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -168,16 +156,16 @@ export default function SettingsPage() {
             <Button
               variant="outline"
               onClick={() => setAccountDialogOpen(false)}
-              disabled={accountLoading}
+              disabled={deleteAccountMutation.isPending}
             >
               Cancel
             </Button>
             <Button
               variant="destructive"
-              onClick={handleDeleteAccount}
-              disabled={accountLoading}
+              onClick={() => deleteAccountMutation.mutate()}
+              disabled={deleteAccountMutation.isPending}
             >
-              {accountLoading ? "Deleting..." : "Remove account"}
+              {deleteAccountMutation.isPending ? "Deleting..." : "Remove account"}
             </Button>
           </DialogFooter>
         </DialogContent>
