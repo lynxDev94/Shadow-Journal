@@ -5,6 +5,7 @@ import React from "react";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { AuthProvider } from "@/providers/Auth";
 import { CreditsProvider } from "@/providers/Credits";
+import { ReactQueryProvider } from "@/providers/ReactQuery";
 import AuthLayout from "./auth-layout";
 import Script from "next/script";
 
@@ -47,11 +48,13 @@ export default function RootLayout({
         className={`${inter.variable} ${playfair.variable} font-sans antialiased`}
       >
         <NuqsAdapter>
-          <AuthProvider>
-            <CreditsProvider>
-              <AuthLayout>{children}</AuthLayout>
-            </CreditsProvider>
-          </AuthProvider>
+          <ReactQueryProvider>
+            <AuthProvider>
+              <CreditsProvider>
+                <AuthLayout>{children}</AuthLayout>
+              </CreditsProvider>
+            </AuthProvider>
+          </ReactQueryProvider>
         </NuqsAdapter>
       </body>
     </html>

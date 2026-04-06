@@ -6,9 +6,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useCreditsContext } from "@/providers/Credits";
 import { countJournalWords } from "@/lib/journal-word-count";
-
-/** Minimum word count in the body before Analyze is enabled. */
-const MIN_WORDS_FOR_ANALYSIS = 200;
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import {
@@ -30,90 +27,25 @@ import {
   X,
   Brain,
   Lightbulb,
-  MessageCircleQuestion,
-  TrendingUp,
   EyeOff,
   PenLine,
   Shuffle,
-  Leaf,
-  Moon,
-  Users,
-  Baby,
 } from "lucide-react";
+import { PROMPT_CATEGORIES, AI_BENEFITS } from "./deps";
+import { shuffleArray } from "@/lib/utils";
 
-const PROMPT_CATEGORIES = [
-  {
-    id: "shadow",
-    title: "The Shadow",
-    icon: Leaf,
-    prompts: [
-      "What trait do I judge most in others, and why does it trigger me?",
-      "When did I last feel envious? What does that envy reveal about my desires?",
-      "What am I currently hiding from my closest friends or partner?",
-    ],
-  },
-  {
-    id: "dream",
-    title: "Dream Work",
-    icon: Moon,
-    prompts: [
-      "Describe a recurring symbol in your dreams. What might it represent?",
-      "What dominant emotion did you feel upon waking up today?",
-      "If the person in your dream was a part of you, which part would they be?",
-    ],
-  },
-  {
-    id: "relationships",
-    title: "Relationships",
-    icon: Users,
-    prompts: [
-      "Who am I trying to please right now, and at what cost to myself?",
-      "What conversation am I avoiding having, and what am I afraid will happen?",
-    ],
-  },
-  {
-    id: "inner-child",
-    title: "Inner Child",
-    icon: Baby,
-    prompts: [
-      "When did I last feel truly playful? What allowed or blocked that?",
-      "What did younger me need to hear that I can offer myself now?",
-      "Where in my life am I still seeking external approval I never got?",
-    ],
-  },
-];
-
-const AI_BENEFITS = [
-  {
-    icon: Lightbulb,
-    text: "Highlight possible shadow patterns and projections.",
-  },
-  {
-    icon: MessageCircleQuestion,
-    text: "Suggest questions for deeper integration work.",
-  },
-  {
-    icon: TrendingUp,
-    text: "Track how your tone and themes shift over time.",
-  },
-];
-
-function shuffleArray<T>(arr: T[]): T[] {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j]!, copy[i]!];
-  }
-  return copy;
-}
+const MIN_WORDS_FOR_ANALYSIS = 200;
 
 export default function JournalPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { credits, loading: creditsLoading, refreshCredits } = useCreditsContext();
+  const {
+    credits,
+    loading: creditsLoading,
+    refreshCredits,
+  } = useCreditsContext();
   const editId = searchParams.get("edit");
-  const canAnalyzeCredits =
-    !creditsLoading && credits !== null && credits >= 1;
+  const canAnalyzeCredits = !creditsLoading && credits !== null && credits >= 1;
   const [title, setTitle] = useState("Untitled reflection");
   const [body, setBody] = useState("");
   const [tags, setTags] = useState<{ id: string; label: string }[]>([]);
@@ -132,7 +64,11 @@ export default function JournalPage() {
   const [analysisResult, setAnalysisResult] =
     useState<JungianAnalysisResult | null>(null);
   const entryDateRef = useRef<string>(new Date().toISOString().slice(0, 10));
-  const lastSavedRef = useRef<{ title: string; body: string; tags: string[] } | null>(null);
+  const lastSavedRef = useRef<{
+    title: string;
+    body: string;
+    tags: string[];
+  } | null>(null);
 
   useEffect(() => {
     setActiveEntryId(editId);
@@ -152,7 +88,8 @@ export default function JournalPage() {
           setTags(
             (e.tags ?? []).map((l: string) => ({ id: `tag-${l}`, label: l })),
           );
-          entryDateRef.current = e.entry_date || new Date().toISOString().slice(0, 10);
+          entryDateRef.current =
+            e.entry_date || new Date().toISOString().slice(0, 10);
           lastSavedRef.current = {
             title: e.title || "Untitled reflection",
             body: e.body || "",
@@ -163,7 +100,9 @@ export default function JournalPage() {
       .finally(() => {
         if (!cancelled) setEditLoading(false);
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [editId]);
 
   const wordCount = countJournalWords(body);
@@ -177,7 +116,8 @@ export default function JournalPage() {
       ? hasContent
       : title !== lastSavedRef.current.title ||
         body !== lastSavedRef.current.body ||
-        JSON.stringify(tagLabels.sort()) !== JSON.stringify([...lastSavedRef.current.tags].sort());
+        JSON.stringify(tagLabels.sort()) !==
+          JSON.stringify([...lastSavedRef.current.tags].sort());
   const isSaved = lastSavedRef.current !== null;
 
   const statusText =
@@ -299,7 +239,7 @@ export default function JournalPage() {
     return (
       <div className="mx-auto max-w-6xl font-sans text-slate-800">
         <div className="flex h-64 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+          <div className="border-brand h-8 w-8 animate-spin rounded-full border-2 border-t-transparent" />
         </div>
       </div>
     );
@@ -395,7 +335,8 @@ export default function JournalPage() {
                   className={`flex items-center gap-2 text-sm font-medium ${
                     statusText === "Saved"
                       ? "text-emerald-600"
-                      : statusText === "Unsaved" || statusText === "Unsaved changes"
+                      : statusText === "Unsaved" ||
+                          statusText === "Unsaved changes"
                         ? "text-amber-600"
                         : "text-slate-500"
                   }`}
@@ -438,7 +379,11 @@ export default function JournalPage() {
                 disabled={saveLoading || editLoading || !body.trim()}
               >
                 <Check className="h-4 w-4" />
-                {saveLoading ? "Saving..." : editId ? "Update Entry" : "Save Entry"}
+                {saveLoading
+                  ? "Saving..."
+                  : editId
+                    ? "Update Entry"
+                    : "Save Entry"}
               </Button>
             </div>
           </div>

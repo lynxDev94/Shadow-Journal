@@ -1,140 +1,135 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useCreditsContext } from "@/providers/Credits";
 import { countJournalWords } from "@/lib/journal-word-count";
-
-const MIN_WORDS_FOR_ANALYSIS = 200;
+import type { Entry } from "../types";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import {
   ArrowLeft,
-  Pencil,
-  Trash2,
   Lightbulb,
   MessageCircle,
+  Pencil,
   Sparkles,
+  Trash2,
 } from "lucide-react";
-import {
-  AiAnalysisModal,
-  JungianAnalysisResult,
-} from "@/components/journal/AiAnalysisModal";
+import { AiAnalysisModal } from "@/components/journal/AiAnalysisModal";
+import { formatDateTime } from "@/lib/utils";
+import type { AnalyzeEntryResponse } from "../types";
 
-type Entry = {
-  id: string;
-  title: string;
-  body: string;
-  tags: string[];
-  entry_date: string;
-  created_at: string;
-};
+const MIN_WORDS_FOR_ANALYSIS = 200;
 
-function formatDateTime(dateStr: string) {
-  const d = new Date(dateStr);
-  const options: Intl.DateTimeFormatOptions = {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  };
-  return d.toLocaleDateString("en-US", options);
+async function fetchEntryById(id: string): Promise<Entry | null> {
+  const response = await fetch(`/api/entries/${id}`);
+  if (response.status === 404) {
+    return null;
+  }
+  if (!response.ok) {
+    throw new Error("Failed to load entry.");
+  }
+
+  const data = await response.json();
+  return data?.entry ?? null;
+}
+
+async function deleteEntryById(id: string): Promise<void> {
+  const response = await fetch(`/api/entries/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    throw new Error("Failed to delete entry.");
+  }
+}
+
+async function analyzeEntryById(id: string): Promise<AnalyzeEntryResponse> {
+  const response = await fetch(`/api/entries/${id}/analysis`, {
+    method: "POST",
+  });
+  const data = await response.json();
+  if (!response.ok || !data?.analysis) {
+    throw new Error(
+      (typeof data?.message === "string" && data.message) ||
+        (typeof data?.error === "string" && data.error) ||
+        "Analysis failed",
+    );
+  }
+
+  return data;
 }
 
 export default function EntryReadPage() {
   const params = useParams();
   const router = useRouter();
-  const { credits, loading: creditsLoading, refreshCredits } = useCreditsContext();
+  const queryClient = useQueryClient();
+  const {
+    credits,
+    loading: creditsLoading,
+    refreshCredits,
+  } = useCreditsContext();
   const id = typeof params.id === "string" ? params.id : null;
-  const [entry, setEntry] = useState<Entry | null>(null);
-  const [loading, setLoading] = useState(true);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
   const [analysisOpen, setAnalysisOpen] = useState(false);
-  const [analysisLoading, setAnalysisLoading] = useState(false);
-  const [analysisError, setAnalysisError] = useState<string | null>(null);
-  const [analysisResult, setAnalysisResult] =
-    useState<JungianAnalysisResult | null>(null);
+
+  const entryQuery = useQuery({
+    queryKey: ["entry", id],
+    queryFn: () => fetchEntryById(id as string),
+    enabled: Boolean(id),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteEntryById,
+    onSuccess: () => {
+      setDeleteOpen(false);
+      router.push("/dashboard/entries");
+      void queryClient.invalidateQueries({ queryKey: ["entries"] });
+      void queryClient.invalidateQueries({ queryKey: ["entry", id] });
+    },
+  });
+
+  const analyzeMutation = useMutation({
+    mutationFn: analyzeEntryById,
+    onSuccess: () => {
+      void refreshCredits();
+    },
+  });
+
+  const entry = entryQuery.data ?? null;
+  const loading = Boolean(id) && entryQuery.isLoading;
+  const analysisResult = analyzeMutation.data
+    ? {
+        ...analyzeMutation.data.analysis,
+        lowConfidence: Boolean(analyzeMutation.data.lowConfidence),
+      }
+    : null;
+  const analysisError =
+    analyzeMutation.error instanceof Error
+      ? analyzeMutation.error.message
+      : null;
 
   const entryWordCount = entry ? countJournalWords(entry.body ?? "") : 0;
   const canAnalyzeLength = entryWordCount >= MIN_WORDS_FOR_ANALYSIS;
-  const canAnalyzeCredits =
-    !creditsLoading && credits !== null && credits >= 1;
+  const canAnalyzeCredits = !creditsLoading && credits !== null && credits >= 1;
   const canAnalyze = canAnalyzeCredits && canAnalyzeLength;
-
-  useEffect(() => {
-    if (!id) {
-      setLoading(false);
-      return;
-    }
-    let cancelled = false;
-    fetch(`/api/entries/${id}`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (!cancelled && data?.entry) setEntry(data.entry);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
 
   const handleDelete = async () => {
     if (!id) return;
-    setDeleteLoading(true);
-    try {
-      const res = await fetch(`/api/entries/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        setDeleteOpen(false);
-        router.push("/dashboard/entries");
-      }
-    } finally {
-      setDeleteLoading(false);
-    }
+    deleteMutation.mutate(id);
   };
 
   const handleAnalyze = async () => {
     if (!id || !canAnalyze) return;
     setAnalysisOpen(true);
-    setAnalysisLoading(true);
-    setAnalysisError(null);
-    setAnalysisResult(null);
-
-    try {
-      const res = await fetch(`/api/entries/${id}/analysis`, {
-        method: "POST",
-      });
-      const data = await res.json();
-      if (!res.ok || !data?.analysis) {
-        throw new Error(
-          (typeof data?.message === "string" && data.message) ||
-            (typeof data?.error === "string" && data.error) ||
-            "Analysis failed",
-        );
-      }
-      void refreshCredits();
-      setAnalysisResult({
-        ...data.analysis,
-        lowConfidence: Boolean(data.lowConfidence),
-      });
-    } catch (error) {
-      setAnalysisError(
-        error instanceof Error ? error.message : "Failed to run analysis",
-      );
-    } finally {
-      setAnalysisLoading(false);
-    }
+    analyzeMutation.reset();
+    analyzeMutation.mutate(id);
   };
 
   if (loading) {
@@ -148,7 +143,7 @@ export default function EntryReadPage() {
           Back to History
         </Link>
         <div className="flex h-48 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+          <div className="border-brand h-8 w-8 animate-spin rounded-full border-2 border-t-transparent" />
         </div>
       </div>
     );
@@ -180,7 +175,6 @@ export default function EntryReadPage() {
       </Link>
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1.8fr)_minmax(280px,1fr)]">
-        {/* Left: Entry content */}
         <div className="border-dashboard-stroke shadow-card-layered rounded-2xl border bg-white p-6 md:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
@@ -219,7 +213,7 @@ export default function EntryReadPage() {
               {entry.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium capitalize text-slate-700"
+                  className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700 capitalize"
                 >
                   {tag}
                 </span>
@@ -245,7 +239,6 @@ export default function EntryReadPage() {
           </div>
         </div>
 
-        {/* Right: AI Analysis */}
         <div className="space-y-4">
           <div className="border-dashboard-stroke shadow-card-layered rounded-2xl border bg-white">
             <div className="border-dashboard-stroke bg-brand/5 flex items-center gap-2 border-b px-5 py-3.5">
@@ -282,13 +275,13 @@ export default function EntryReadPage() {
                 className="bg-brand hover:bg-brand/90 w-full gap-2 rounded-xl text-white"
                 onClick={handleAnalyze}
                 disabled={
-                  analysisLoading ||
+                  analyzeMutation.isPending ||
                   !canAnalyze ||
                   !entry.body?.trim()
                 }
               >
                 <Sparkles className="h-4 w-4" />
-                {analysisLoading ? "Analyzing..." : "Analyze with AI"}
+                {analyzeMutation.isPending ? "Analyzing..." : "Analyze with AI"}
               </Button>
               <Button
                 variant="outline"
@@ -303,24 +296,32 @@ export default function EntryReadPage() {
         </div>
       </div>
 
-      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+      <Dialog
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete entry</DialogTitle>
             <DialogDescription>
-              This action cannot be undone. The entry will be permanently removed.
+              This action cannot be undone. The entry will be permanently
+              removed.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteOpen(false)} disabled={deleteLoading}>
+            <Button
+              variant="outline"
+              onClick={() => setDeleteOpen(false)}
+              disabled={deleteMutation.isPending}
+            >
               Cancel
             </Button>
             <Button
               variant="destructive"
               onClick={handleDelete}
-              disabled={deleteLoading}
+              disabled={deleteMutation.isPending}
             >
-              {deleteLoading ? "Deleting..." : "Delete"}
+              {deleteMutation.isPending ? "Deleting..." : "Delete"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -329,7 +330,7 @@ export default function EntryReadPage() {
       <AiAnalysisModal
         open={analysisOpen}
         onOpenChange={setAnalysisOpen}
-        loading={analysisLoading}
+        loading={analyzeMutation.isPending}
         error={analysisError}
         result={analysisResult}
       />
