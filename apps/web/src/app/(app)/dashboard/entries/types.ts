@@ -22,3 +22,24 @@ export type AnalyzeEntryResponse = {
   analysis: JungianAnalysisResult;
   lowConfidence?: boolean;
 };
+
+export type DeleteEntryDialogProps = {
+  open: boolean;
+  deleting: boolean;
+  onOpenChange: (open: boolean) => void;
+  onConfirmDelete: () => void;
+};
+
+export type EntryAnalysisCardProps = {
+  canAnalyze: boolean;
+  creditsLoading: boolean;
+  credits: number | null;
+  body: string;
+  analyzing: boolean;
+  onAnalyze: () => void;
+};
+
+export type EntryDetailContentProps = {
+  entry: Entry;
+  onDeleteClick: () => void;
+};

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useCreditsContext } from "@/providers/Credits";
 import { countJournalWords } from "@/lib/journal-word-count";
+import { MIN_WORDS_FOR_ANALYSIS } from "@/lib/constants";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import {
@@ -33,8 +34,6 @@ import {
 } from "lucide-react";
 import { PROMPT_CATEGORIES, AI_BENEFITS } from "./deps";
 import { shuffleArray } from "@/lib/utils";
-
-const MIN_WORDS_FOR_ANALYSIS = 200;
 
 export default function JournalPage() {
   const router = useRouter();
