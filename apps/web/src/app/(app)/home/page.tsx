@@ -5,7 +5,6 @@ import {
   Features,
   Hero,
   Benefits,
-  JournalDemo,
   Process,
   Privacy,
   Pricing,

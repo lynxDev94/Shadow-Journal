@@ -3,11 +3,10 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Brain, MoonStar, Quote, Sparkles } from "lucide-react";
+import { MoonStar, Quote, Sparkles } from "lucide-react";
 
 export interface AnalysisCitation {
   source: string;
