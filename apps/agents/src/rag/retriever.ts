@@ -40,7 +40,9 @@ export async function retrieveJungianContexts(
       source: String(item.source ?? "unknown_source"),
       chunkId: Number(item.chunk_index ?? 0),
       preview:
-        previewText.length > 420 ? `${previewText.slice(0, 420)}...` : previewText,
+        previewText.length > 420
+          ? `${previewText.slice(0, 420)}...`
+          : previewText,
       similarity: Number(item.similarity ?? 0),
     };
   });
@@ -51,7 +53,10 @@ export async function retrieveJungianContexts(
           0,
           Math.min(
             1,
-            contexts.reduce((best, context) => Math.max(best, context.similarity), 0),
+            contexts.reduce(
+              (best, context) => Math.max(best, context.similarity),
+              0,
+            ),
           ),
         ).toFixed(2),
       )

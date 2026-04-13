@@ -36,7 +36,9 @@ async function ingestSource(
     .maybeSingle();
 
   if (existingErr) {
-    throw new Error(`Failed reading existing doc "${source}": ${existingErr.message}`);
+    throw new Error(
+      `Failed reading existing doc "${source}": ${existingErr.message}`,
+    );
   }
 
   if (existingDoc?.source_hash === sourceHash) {
@@ -70,7 +72,9 @@ async function ingestSource(
     .eq("source", source);
 
   if (deleteErr) {
-    throw new Error(`Failed deleting previous chunks for "${source}": ${deleteErr.message}`);
+    throw new Error(
+      `Failed deleting previous chunks for "${source}": ${deleteErr.message}`,
+    );
   }
 
   const embeddings = getEmbeddingsModel();
@@ -119,7 +123,9 @@ async function run() {
       if (result.ingested) {
         stats.ingested += 1;
         stats.chunksUpserted += result.chunks;
-        console.log(`[ingest] upserted ${result.chunks} chunks from ${filePath}`);
+        console.log(
+          `[ingest] upserted ${result.chunks} chunks from ${filePath}`,
+        );
       } else {
         stats.skipped += 1;
         console.log(`[ingest] skipped ${filePath}`);

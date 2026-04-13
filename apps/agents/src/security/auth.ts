@@ -40,14 +40,9 @@ export const auth = new Auth()
         display_name: "CORS Preflight",
       };
     }
-    const headersObj: Record<string, string> = {};
-    for (const [key, value] of Object.entries(request.headers)) {
-      headersObj[key] = value;
-    }
     console.log("[auth] Incoming request", {
       url: request.url,
       method: request.method,
-      headers: headersObj,
     });
     // Parse Authorization header
     const authHeader = request.headers.get("authorization");

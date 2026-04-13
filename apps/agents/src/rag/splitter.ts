@@ -6,9 +6,7 @@ const splitter = new RecursiveCharacterTextSplitter({
   chunkOverlap: 120,
 });
 
-export async function splitDocuments(
-  docs: Document[],
-): Promise<Document[]> {
+export async function splitDocuments(docs: Document[]): Promise<Document[]> {
   if (!docs.length) return [];
 
   const chunks = await splitter.splitDocuments(docs);
