@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { z } from "zod";
-import { Lock, Gem } from "lucide-react";
+import { Lock, Gem, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -134,22 +134,24 @@ export default function SignupPage() {
 
             <div className="rounded-2xl border border-white/10 bg-white/5 px-6 py-5 backdrop-blur-sm">
               <p className="font-sans text-xs font-bold tracking-[0.2em] text-slate-300 uppercase">
-                Private & Encrypted
+                Private & secure
               </p>
               <p className="mt-3 max-w-xs font-sans text-sm leading-relaxed text-slate-400">
-                Your unconscious is yours alone. All entries are end-to-end
-                encrypted.
+                Not a social feed: your writing stays with your account, uses a
+                secure connection, and is handled with sensible protections. We
+                don&apos;t use the kind of end-to-end encryption where only your
+                device could ever read your entries.
               </p>
             </div>
 
             <div className="flex gap-6 font-sans text-sm text-slate-500">
               <div className="flex items-center gap-2">
                 <Lock className="h-4 w-4" />
-                <span className="uppercase">Encrypted</span>
+                <span className="uppercase">HTTPS</span>
               </div>
               <div className="flex items-center gap-2">
                 <Gem className="h-4 w-4" />
-                <span className="uppercase">Private</span>
+                <span className="uppercase">Your account</span>
               </div>
             </div>
           </div>
@@ -158,6 +160,14 @@ export default function SignupPage() {
 
       <div className="bg-surface-dark relative flex w-full flex-col justify-between p-8 lg:w-1/2 lg:p-16">
         <div className="mx-auto w-full max-w-md space-y-8">
+          <Link
+            href="/"
+            className="absolute top-6 left-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-slate-200 backdrop-blur-sm hover:bg-white/10 hover:text-slate-100"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to home
+          </Link>
+
           <div className="space-y-2">
             <h2 className="font-headline text-3xl font-bold text-slate-100 md:text-4xl">
               Create an account

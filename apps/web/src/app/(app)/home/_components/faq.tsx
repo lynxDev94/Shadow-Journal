@@ -7,7 +7,7 @@ const FAQ_BG_IMAGE = "/images/faq-pen-writing.png";
 const FAQ_ITEMS = [
   {
     q: "Is my data safe with AI?",
-    a: "We use secure authentication, encrypted transport, and access controls. When you choose Analyze, relevant entry content is processed to generate that result. We do not sell your journal data.",
+    a: "We take the usual steps you would expect from a modern app: you sign in, your journal stays tied to your account, and data moves over a secure connection. Your writing is stored on our systems so the product can work like a normal website (not the kind of setup where only your phone can ever read it). If you use Analyze, the relevant entry is sent to our AI partners to produce that result. We do not sell your journal data.",
   },
   {
     q: "How does Jungian analysis work in practice?",

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthContext } from "@/providers/Auth";
@@ -130,13 +130,21 @@ export default function SigninPage() {
 
           <div className="flex items-center gap-2 font-sans text-sm text-slate-500">
             <Lock className="h-4 w-4" />
-            Encrypted & Private Journaling
+            Private journaling with a secure connection
           </div>
         </div>
       </div>
 
-      <div className="bg-surface-dark flex w-full flex-col justify-between p-8 lg:w-1/2 lg:p-16">
+      <div className="bg-surface-dark relative flex w-full flex-col justify-between p-8 lg:w-1/2 lg:p-16">
         <div className="mx-auto w-full max-w-md space-y-8">
+          <Link
+            href="/"
+            className="absolute top-6 left-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-slate-200 backdrop-blur-sm hover:bg-white/10 hover:text-slate-100"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to home
+          </Link>
+
           <div className="space-y-2">
             <h2 className="font-headline text-3xl font-bold text-slate-100 md:text-4xl">
               Welcome back

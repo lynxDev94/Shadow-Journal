@@ -1,4 +1,4 @@
-import { Lock, Shield } from "lucide-react";
+import { Lock, Shield, ShieldCheck, Trash2 } from "lucide-react";
 
 export const Privacy = () => {
   return (
@@ -17,8 +17,11 @@ export const Privacy = () => {
             </h2>
             <p className="mb-8 text-lg text-slate-400">
               Your entries are for you. Shadow Journal is built for reflection,
-              not performance - no public posting, no likes, no algorithmic
-              pressure.
+              not performance: no public posting, no likes, no algorithmic
+              pressure. We protect your account with a secure connection and
+              sensible access controls, the way most trusted web apps do. We do
+              not claim end-to-end encryption where only your device holds the
+              keys.
             </p>
             <ul className="space-y-4">
               <li className="flex gap-3">
@@ -28,7 +31,8 @@ export const Privacy = () => {
                     Private by default
                   </h4>
                   <p className="text-sm text-slate-400">
-                    Only your account can access your entries.
+                    Your journal is not a social feed. Only your signed-in
+                    account can load your entries through the app.
                   </p>
                 </div>
               </li>
@@ -36,18 +40,34 @@ export const Privacy = () => {
                 <Shield className="text-brand mt-0.5 h-5 w-5 shrink-0" />
                 <div>
                   <h4 className="font-sans font-bold text-slate-100">
-                    Encrypted connection (HTTPS)
+                    Secure connection
                   </h4>
                   <p className="text-sm text-slate-400">
-                    Your entries are protected while being sent and saved.
+                    When you use the app, data travels over an encrypted
+                    connection so it is not exposed in transit.
                   </p>
                 </div>
               </li>
               <li className="flex gap-3">
-                <Shield className="text-brand mt-0.5 h-5 w-5 shrink-0" />
+                <ShieldCheck className="text-brand mt-0.5 h-5 w-5 shrink-0" />
                 <div>
                   <h4 className="font-sans font-bold text-slate-100">
-                    Delete Anytime
+                    Your journal, your account
+                  </h4>
+                  <p className="text-sm text-slate-400">
+                    Your entries are saved with your login and kept separate from
+                    other people&apos;s data. Because the service needs to read
+                    your writing to show it back to you, and when you choose
+                    features like analysis, this works like a typical online
+                    journal, not a vault only your device can open.
+                  </p>
+                </div>
+              </li>
+              <li className="flex gap-3">
+                <Trash2 className="text-brand mt-0.5 h-5 w-5 shrink-0" />
+                <div>
+                  <h4 className="font-sans font-bold text-slate-100">
+                    Delete anytime
                   </h4>
                   <p className="text-sm text-slate-400">
                     You can delete entries or your account whenever you want.
@@ -66,7 +86,7 @@ export const Privacy = () => {
               Private by Design
             </p>
             <p className="text-xs text-slate-500">
-              No public profiles. No ads. You control your journal data.
+              No public profiles. No ads. Clear about what private means here.
             </p>
           </div>
         </div>

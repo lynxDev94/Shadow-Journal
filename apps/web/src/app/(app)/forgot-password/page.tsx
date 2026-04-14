@@ -158,7 +158,7 @@ export default function ForgotPasswordPage() {
           <div className="flex items-center justify-center gap-6 font-sans text-[11px] tracking-wider text-slate-500 uppercase">
             <span className="flex items-center gap-1.5">
               <Lock className="h-3.5 w-3.5" />
-              Encrypted
+              HTTPS
             </span>
             <span className="flex items-center gap-1.5">
               <Check className="h-3.5 w-3.5" />

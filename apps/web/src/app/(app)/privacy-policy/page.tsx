@@ -170,6 +170,13 @@ export default function PrivacyPolicyPage() {
               data, including secure transport and controlled access. No online
               system is 100% secure.
             </p>
+            <p className="mt-2">
+              The Services are not designed so that only your device can decrypt
+              your journal. Content is stored on our systems so we can run the
+              product and the features you choose (including optional AI
+              analysis). For details on what we collect and share, see sections
+              2, 5, and 6.
+            </p>
           </section>
 
           <section>
