@@ -55,11 +55,11 @@ export const Privacy = () => {
                     Your journal, your account
                   </h4>
                   <p className="text-sm text-slate-400">
-                    Your entries are saved with your login and kept separate from
-                    other people&apos;s data. Because the service needs to read
-                    your writing to show it back to you, and when you choose
-                    features like analysis, this works like a typical online
-                    journal, not a vault only your device can open.
+                    Your entries are saved with your login and kept separate
+                    from other people&apos;s data. Because the service needs to
+                    read your writing to show it back to you, and when you
+                    choose features like analysis, this works like a typical
+                    online journal, not a vault only your device can open.
                   </p>
                 </div>
               </li>

@@ -269,7 +269,9 @@ export default function ArchetypePage() {
           scores: nextScores,
         };
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-      } catch {}
+      } catch {
+        // Ignore storage failures (blocked/unavailable).
+      }
       return;
     }
 
@@ -284,9 +286,10 @@ export default function ArchetypePage() {
     setSelectedOptionIdx(null);
     try {
       window.localStorage.removeItem(STORAGE_KEY);
-    } catch {}
+    } catch {
+      // Ignore storage failures (blocked/unavailable).
+    }
   };
-
   return (
     <main className="bg-background-dark min-h-screen font-sans text-slate-100">
       <div className="mx-auto max-w-3xl px-6 py-16">
