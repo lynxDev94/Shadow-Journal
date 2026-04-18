@@ -7,13 +7,7 @@ import { tool } from "@langchain/core/tools";
 import { z } from "zod";
 import { retrieveJungianContexts } from "./rag/retriever.js";
 
-/**
- * Tavily search tool configuration
- * This tool allows the agent to perform web searches using the Tavily API.
- */
-const searchTavily = new TavilySearchResults({
-  maxResults: 3,
-});
+const tavilyApiKey = process.env.TAVILY_API_KEY?.trim();
 
 const jungianKbSearch = tool(
   async ({ question, topK }: { question: string; topK?: number }) => {
@@ -49,11 +43,17 @@ const jungianKbSearch = tool(
 );
 
 /**
- * Export an array of all available tools
- * Add new tools to this array to make them available to the agent
- *
- * Note: You can create custom tools by implementing the Tool interface from @langchain/core/tools
- * and add them to this array.
- * See https://js.langchain.com/docs/how_to/custom_tools/#tool-function for more information.
+ * Tavily web search is optional: omit when `TAVILY_API_KEY` is unset so deploys
+ * (e.g. Render) can start without a Tavily subscription.
  */
-export const TOOLS = [jungianKbSearch, searchTavily];
+export const TOOLS = [
+  jungianKbSearch,
+  ...(tavilyApiKey
+    ? [
+        new TavilySearchResults({
+          maxResults: 3,
+          apiKey: tavilyApiKey,
+        }),
+      ]
+    : []),
+];
